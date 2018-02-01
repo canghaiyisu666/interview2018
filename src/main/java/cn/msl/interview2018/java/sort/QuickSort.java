@@ -16,7 +16,7 @@ public class QuickSort {
 
     private static void qsort(int[] arr, int L, int R) {
         if (L < R) {
-            int pivot = partition(arr, L, R);        //将数组分为两部分
+            int pivot = partition(arr, L, R);        //按照基准值进行大小排序，返回基准值的位置
             qsort(arr, L, pivot - 1);                   //递归排序左子数组
             qsort(arr, pivot + 1, R);                  //递归排序右子数组
         }
