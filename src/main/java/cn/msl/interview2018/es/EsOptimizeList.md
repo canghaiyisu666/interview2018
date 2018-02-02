@@ -62,10 +62,10 @@ niofs
 ###a)	关闭OS交换分区
 
     swappoff -a
-    echo “vm.swappiness = 0” >> /etc/sysctl.conf
+    echo “vm.swappiness = 1” >> /etc/sysctl.conf
     sysctl –p
     
-同时需要注释掉/etc/fstab中包含swap的挂载
+同时需要注释掉/etc/fstab中包含swap的挂载。(vm.swappiness 设置为0可能会导致OOM)
 
 ###b)	锁定es内存
 在elasticsearch.yml中需要配置bootstrap.memory_lock
@@ -74,8 +74,6 @@ niofs
 
 在文件/etc/security/limits.conf尾部追加：
 
-    * soft nofile 204800
-    * hard nofile 204800
     * soft memlock ulimited
     * hard memlock ulimited
 
@@ -92,10 +90,26 @@ niofs
 修改/etc/security/limits.d/90-nproc.conf ，把文件中的1024修改为4096
 
 ###d)	修改OS对mmap的限制
-在/etc/sysctl.conf 中加入vm.max_map_count=262144 ，执行sysctl -p确保文件修改生效。
+es存储索引时，默认需要使用mmapfs或niofs。操作系统对于mmap数的默认配置太小，这可能会导致出现内存问题。
+在Linux系统中，可以使用root执行如下命令来增加mmap数的限制。
+
+    sysctl -w vm.max_map_count=262144
+
+要让设置永久生效，需要在文件/etc/sysctl.conf中写入vm.max_map_count的值。重启机器后可以执行sysctl vm.max_map_count来确认是否生效。
 
     echo “vm.max_map_count = 262144” >> /etc/sysctl.conf
     sysctl -p
+
+###e)  修改File Descriptors (Linux Only)
+es需要使用大量的文件描述符和句柄。耗尽文件描述符是灾难性的，会导致数据丢失。 确保将es的文件描述符的数量限制增加到65,536或更高。
+在文件/etc/security/limits.conf尾部追加：
+
+    * soft nofile 204800
+    * hard nofile 204800
+
+配置好后可以通过节点状态api来确认max_file_descriptors是否生效：
+
+    GET _nodes/stats/process?filter_path=**.max_file
 
 ##2.	服务相关配置
 ###a)	角色规划
