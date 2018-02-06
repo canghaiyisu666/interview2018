@@ -1,7 +1,7 @@
 
-#一、	外部关联配置
-##1.	数据生命周期
-###冷热分离
+# 一、	外部关联配置
+## 1.	数据生命周期
+### 冷热分离
 mmapfs
 >stores the shard index on the file system by mapping a file into memory (mmap). 
 
@@ -15,7 +15,7 @@ niofs
                 }
     }
 
-###减少内存开销---段合并
+### 减少内存开销---段合并
 查看一个索引所有segment的memory占用情况：
 
     GET  /_cat/segments?v
@@ -29,7 +29,7 @@ niofs
 
     POST /my_index/_forcemerge?max_num_segments=1
 
-###副本管理
+### 副本管理
 
     PUT /my_index/_settings
     {  "index" : {
@@ -37,7 +37,7 @@ niofs
                 }
     }
 
-###统计监控，日志跟踪
+### 统计监控，日志跟踪
 
 |                   |   count        |
 |   --------    | -------------|
@@ -49,7 +49,7 @@ niofs
 |   Node1    |                     |
 |   Node2    |                    |
 
-##2.	其他属性
+## 2.	其他属性
 
 |   属性名         |           修改值     |           所属配置        |           说明|
 |       ------      |           -------     |               -----           |       ------   |
@@ -57,9 +57,9 @@ niofs
 |     index属性            |       analyzed / not_analyzed /no 	 |   Mapping | analyzed进行分词, not_analyzed为当作关键词对待，no为不创建索引|
 |    docvalue属性       |         false/true          |     Mapping	    |               Sorting, aggregations  |
 
-#二、	平台内部配置
-##1.	操作系统配置
-###a)	关闭OS交换分区
+# 二、	平台内部配置
+## 1.	操作系统配置
+### a)	关闭OS交换分区
 
     swappoff -a
     echo “vm.swappiness = 1” >> /etc/sysctl.conf
@@ -67,7 +67,7 @@ niofs
     
 同时需要注释掉/etc/fstab中包含swap的挂载。(vm.swappiness 设置为0可能会导致OOM)
 
-###b)	锁定es内存
+### b)	锁定es内存
 在elasticsearch.yml中需要配置bootstrap.memory_lock
 
     bootstrap.memory_lock: true
@@ -86,10 +86,10 @@ niofs
 
     GET _nodes?filter_path=**.mlockall
 
-###c)	修改最大用户进程数
+### c)	修改最大用户进程数
 修改/etc/security/limits.d/90-nproc.conf ，把文件中的1024修改为4096
 
-###d)	修改OS对mmap的限制
+### d)	修改OS对mmap的限制
 es存储索引时，默认需要使用mmapfs或niofs。操作系统对于mmap数的默认配置太小，这可能会导致出现内存问题。
 在Linux系统中，可以使用root执行如下命令来增加mmap数的限制。
 
@@ -100,7 +100,7 @@ es存储索引时，默认需要使用mmapfs或niofs。操作系统对于mmap数
     echo “vm.max_map_count = 262144” >> /etc/sysctl.conf
     sysctl -p
 
-###e)  修改File Descriptors (Linux Only)
+### e)  修改File Descriptors (Linux Only)
 es需要使用大量的文件描述符和句柄。耗尽文件描述符是灾难性的，会导致数据丢失。 确保将es的文件描述符的数量限制增加到65,536或更高。
 在文件/etc/security/limits.conf尾部追加：
 
@@ -111,8 +111,8 @@ es需要使用大量的文件描述符和句柄。耗尽文件描述符是灾难
 
     GET _nodes/stats/process?filter_path=**.max_file
 
-##2.	服务相关配置
-###a)	角色规划
+## 2.	服务相关配置
+### a)	角色规划
 角色官方释义：
 
 Master-eligible node
@@ -137,7 +137,7 @@ Ingest node
 * 当硬件资源有限时，或者单节点超大内存时，建议在一个节点上规划多个运行实例。目的是提高内存利用率。
 
 
-###b)	elasticsearch.yml
+### b)	elasticsearch.yml
 
 |属性名|修改值|说明|
 |------|-------|-----|
@@ -147,7 +147,7 @@ Ingest node
 |threadpool.delete.queue_size	|50	|        服务端delete操作线程池队列大小(默认200)  |
 |threadpool.bulk.queue_size		|     |   服务端bulk操作线程池队列大小(默认50)  |
 		
-###c)	setting 
+### c)	setting 
 
 
 |属性名|修改值|说明|
@@ -166,11 +166,11 @@ Ingest node
 
 
 
-#三、	FAQ
-##1.	启动 elasticsearch 如出现异常  can not run elasticsearch as root  
+# 三、	FAQ
+## 1.	启动 elasticsearch 如出现异常  can not run elasticsearch as root  
 解决方法：创建elastic 账户，修改文件夹 文件 所属用户组。
 
-##2.	启动异常：ERROR: bootstrap checks failed
+## 2.	启动异常：ERROR: bootstrap checks failed
 >system call filters failed to install; check the logs and fix your configuration or disable system call filters at your own risk
 
 原因：因为Centos6不支持SecComp，而ES5.2.1默认bootstrap.system_call_filter为true进行检测，所以导致检测失败，失败后直接导致ES不能启动。详见 : https://github.com/elastic/elasticsearch/issues/22899
@@ -179,7 +179,7 @@ Ingest node
 
     bootstrap.system_call_filter: false
 
-##3.	max number of threads [1024] for user [lish] likely too low, increase to at least [2048]
+## 3.	max number of threads [1024] for user [lish] likely too low, increase to at least [2048]
 解决：切换到root用户，进入limits.d目录下修改配置文件。
 vim /etc/security/limits.d/90-nproc.conf 
 修改如下内容：
@@ -189,7 +189,7 @@ vim /etc/security/limits.d/90-nproc.conf
 
     * soft nproc 4096
 
-##4.	Bulk队列设置(自身实现导致)
+## 4.	Bulk队列设置(自身实现导致)
 现象：对es集群进行大量index或delete操作时，报bulk队列溢出异常。
 
 原因：TransportDeleteAction TransportSingleItemBulkWriteAction TransportBulkAction   (https://github.com/elastic/elasticsearch/pull/21964)  影响范围5.3+
@@ -207,7 +207,6 @@ vim /etc/security/limits.d/90-nproc.conf
 [es分析内存分配过程案例]( https://github.com/elastic/elasticsearch/issues/22013)
 
 [MAT的使用说明](http://blog.csdn.net/bohu83/article/details/51124060)
-
 
 
 
