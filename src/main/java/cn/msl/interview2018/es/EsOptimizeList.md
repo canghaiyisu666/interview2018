@@ -198,6 +198,9 @@ vim /etc/security/limits.d/90-nproc.conf
 ##5.	内存监控与管理
 * 索引需要常驻内存，无法GC，需要关注监控data node上segment memory增长趋势。
 * 根据GC日志，确认heap各个代配置比例是否正常，评估是否有必要使用G1GC
+
+> 早期版本的JDK 8存在一些问题，当G1GC收集器启用时，会导致索引损坏。
+受影响的版本为JDK 8u40之前的版本。评估GC收集器时需考虑到JDK的版本。
 * 使用命令把异常的内存dump出来，使用MAT进行分析
 
 
