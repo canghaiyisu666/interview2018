@@ -192,7 +192,7 @@ vim /etc/security/limits.d/90-nproc.conf
 ## 4.	Bulk队列设置(自身实现导致)
 现象：对es集群进行大量index或delete操作时，报bulk队列溢出异常。
 
-原因：TransportDeleteAction TransportSingleItemBulkWriteAction TransportBulkAction   (https://github.com/elastic/elasticsearch/pull/21964)  影响范围5.3+
+原因：TransportDeleteAction > TransportSingleItemBulkWriteAction > TransportBulkAction   (https://github.com/elastic/elasticsearch/pull/21964)  影响范围5.3+
 官方测试发现一条记录的index/delete和作为单条bulk请求处理，底层操作性能开销几乎没有分别。 为了减少代码路径，做了这个操作的合并。 因为index/delete/bulk现在共享bulk的线程池，默认的线程池设置可能不够用。
 
 ##5.	内存监控与管理
