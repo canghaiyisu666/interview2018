@@ -195,7 +195,7 @@ vim /etc/security/limits.d/90-nproc.conf
 原因：TransportDeleteAction > TransportSingleItemBulkWriteAction > TransportBulkAction   (https://github.com/elastic/elasticsearch/pull/21964)  影响范围5.3+
 官方测试发现一条记录的index/delete和作为单条bulk请求处理，底层操作性能开销几乎没有分别。 为了减少代码路径，做了这个操作的合并。 因为index/delete/bulk现在共享bulk的线程池，默认的线程池设置可能不够用。
 
-##5.	内存监控与管理
+## 5.	内存监控与管理
 * 索引需要常驻内存，无法GC，需要关注监控data node上segment memory增长趋势。
 * 根据GC日志，确认heap各个代配置比例是否正常，评估是否有必要使用G1GC
 
