@@ -11,7 +11,7 @@
 
 ### H2O for Flow user
 
-### H2O for CDH user
+### H2O for hadoop user
 
 ### Sparkling Water  user
 

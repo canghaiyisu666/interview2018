@@ -1,3 +1,7 @@
+
+[GOOGLE中文教程](https://developers.google.com/machine-learning/crash-course/)
+
+
 # 基本概念
 
 [apacheCN-ML](http://cwiki.apachecn.org/display/ML)
