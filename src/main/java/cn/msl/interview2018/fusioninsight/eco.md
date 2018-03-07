@@ -2,6 +2,8 @@
 
 FusionInsight支持开源标准的Hadoop接口，可以与以下第三方工具进行对接
 
+[原文地址](https://www.gitbook.com/book/fusioninsight/ecosystem/details)
+
 ##SQL分析
 
 
