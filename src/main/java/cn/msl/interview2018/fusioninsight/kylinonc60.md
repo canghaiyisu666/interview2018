@@ -25,32 +25,30 @@ Apache Kylin主要与FusionInsight的Hive和HBase进行对接
 ## 编译Kylin
   可直接下载的二进制文件的Kylin-1.6.0主版本是基于HBase1.1.1编译的，而FusionInsight使用的HBase版本是1.0.2，这两个版本部分类和方法不兼容，需要配套1.0.2的HBase重新编译Kylin。
   
-  * 下载Kylin-1.6.0基于HBase1.0.2版本的源码 `https://github.com/apache/kylin/tree/yang21-hbase102` 得到kylin-yang21-hbase102.zip
+  * 下载Kylin-1.6.0基于HBase1.0.2版本的源码 [https://github.com/apache/kylin/tree/yang21-hbase102]得到kylin-yang21-hbase102.zip
   
-  * 安装编译工具
+  * 安装maven：
   
-  安装maven：
   
     wget http://apache.osuosl.org/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz
     tar -xzvf apache-maven-3.3.9-bin.tar.gz -C /opt/
     
-  修改profile文件`vi /etc/profile`,增加以下配置
+  * 修改profile文件`vi /etc/profile`,增加以下配置
+  
   
     export PATH=$PATH:/opt/apache-maven-3.3.9/bin
     
-   导入环境变量
+   * 导入环境变量
    
     source /etc/profile
     
-   执行`mvn -v`  ，验证是否安装成功。
+   * 执行`mvn -v`  ，验证是否安装成功。
     
-* 安装git
-
+   * 安装git
 
     yum install -y git
     
-* 安装nodejs：
-
+   * 安装nodejs：
 
     wget https://nodejs.org/dist/v6.10.0/node-v6.10.0-linux-x64.tar.xz --no-check-certificate
     tar -xvf node-v6.10.0-linux-x64.tar.xz -C /opt/
@@ -106,7 +104,7 @@ Apache Kylin主要与FusionInsight的Hive和HBase进行对接
 * 进行kerberos认证
 
 
-    kinit test_cn
+    kinit itdw
     
 * Kylin检查环境设置：
 
@@ -117,12 +115,13 @@ Apache Kylin主要与FusionInsight的Hive和HBase进行对接
 ## 修改Kylin配置
 
 * 修改kylin.properties： `vi /opt/apache-kylin-1.6.0-bin/conf/kylin.properties`
-配置Hive client使用beeline：
 
+    - 配置Hive client使用beeline(此处要确认配置的jdbc连接串正确可用)：
+    
+            kylin.hive.client=beeline
+            kylin.hive.beeline.params=-n itdw -u 'jdbc:hive2://162.1.93.103:24002,162.1.93.102:24002,162.1.93.101:24002/;serviceDiscoveryMode=zooKeeper;zooKeeperNamespace=hiveserver2;sasl.qop=auth-conf;auth=KERBEROS;principal=hive/hadoop.hadoop.com@HADOOP.COM'
 
-    kylin.hive.client=beeline
-    kylin.hive.beeline.params=-n itdw -u 'jdbc:hive2://162.1.93.103:24002,162.1.93.102:24002,162.1.93.101:24002/;serviceDiscoveryMode=zooKeeper;zooKeeperNamespace=hiveserver2;sasl.qop=auth-conf;auth=KERBEROS;principal=hive/hadoop.hadoop.com@HADOOP.COM'
-配置获取任务状态时使用kerberos 鉴权：
+    - 配置获取任务状态时使用kerberos 鉴权：
 
     kylin.job.status.with.kerberos=true
 
@@ -136,16 +135,15 @@ FusionInsight不允许修改dfs.replication, mapreduce.job.split.metainfo.maxsiz
 
 * Hive/HBase配置
 
-  将/opt/hadoopclient/Hive/config/hivemetastore-site.xml中的配置合并到hive-site.xml
+  - 将/opt/hadoopclient/Hive/config/hivemetastore-site.xml中的配置合并到hive-site.xml
   
-  将/opt/hadoopclient/HBase/hbase/conf/hbase-site.xml中的配置合并到/opt/apache-kylin-1.6.0-bin/conf/kylin_job_conf.xml
+  - 将/opt/hadoopclient/HBase/hbase/conf/hbase-site.xml中的配置合并到/opt/apache-kylin-1.6.0-bin/conf/kylin_job_conf.xml
   
 * Hive lib路径
   kylin的find-hive-dependency.sh默认Hive lib路径为大数据集群中Hive的安装路径，若Kylin安装在集群节点上不会有问题，否则需要修改为客户端路径。
   编辑find-hive-dependency.sh：`vi /opt/apache-kylin-1.6.0-bin/bin/find-hive-dependency.sh`
   
-  
-    hive_lib=`find -L "$(dirname $HCAT_HOME)" -name '*.jar' ! -name '*calcite*' -printf '%p:' | sed 's/:$//'`
+        hive_lib=`find -L "$(dirname $HCAT_HOME)" -name '*.jar' ! -name '*calcite*' -printf '%p:' | sed 's/:$//'`
 
 
 ## 启动Kylin
@@ -173,7 +171,7 @@ FusionInsight不允许修改dfs.replication, mapreduce.job.split.metainfo.maxsiz
 * 在Insight页面执行查询
 
 
-    select * from kylin_sales;
+    select * from kylin_sales limit 50;
     
     
     
