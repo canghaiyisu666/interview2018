@@ -32,7 +32,14 @@
 * `RESUME`：这个操作将从失败的Job的最后一个成功点继续执行该Job。
 * `DISCARD`：无论工作的状态,用户可以结束它和释放资源。
 
-## Cube的构建过程
+## Kylin界面功能
+
+|  insight   |  model  |  monitor   |    system   | 
+|    ---     |    -----    |   ------       |  -----       |
+|   结果管理 | 模型管理，Cube管理, 数据源管理| job管理|  系统管理       |
+
+
+## Cube的构建算法
 
 ### 逐层算法
 分层
@@ -40,7 +47,7 @@
 ### 快速算法
 分数据
 
-## Cube构建流程
+## Cube构建逻辑流程
 1. 构建一个中间平表(Hive Table)：将Model中的fact表和look up表构建成一个大的Flat Hive Table。
 2. 重新分配Flat Hive Tables。
 3. 从事实表中抽取维度的Distinct值。
@@ -55,11 +62,19 @@
 12. 更新Cube信息。
 13. 清理Hive。
 
-## Kylin的基本操作
+## Cube构建操作
+1. 在`Cubes`页面中，点击cube栏右侧的`Action`下拉按钮并选择`Build`操作。
+2. 选择后会出现一个弹出窗口。点击END DATE输入框选择增量构建这个cube的结束日期。
+3. 点击`Submit`提交请求。
+4. 提交请求成功后，你将会看到`Monitor`页面新建了job。
+5. 如要放弃这个job，点击`Discard`按钮。
 
-
+## Job监控
+* 在Monitor页面，点击job详情按钮查看显示于右侧的详细信息。
+* 点击每个步骤显示的图标按钮查看详情：`Parameters`、`Log`、`MRJob`。
  
  
+## 工程管理
  
  
  
