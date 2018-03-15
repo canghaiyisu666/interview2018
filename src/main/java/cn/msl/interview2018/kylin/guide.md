@@ -29,6 +29,17 @@ location取第二个值(假设为HangZhou)、product取第三个值(假设为Foo
 这就相当于求数组中array[0][1]的值，但这个返回的是一个数组，而SQL返回的是一个值，因此需要将这个数组中的每一个data cell取出来再进行聚合运算（例如计数、相加等）
 得到的值才是真正的结果。 
 
+Kylin与传统的OLAP一样，无法应对数据Update的情况（更新数据会导致Cube的失效，需要重建整个Cube）。
+面对每天甚至每两个小时这样固定周期的增量数据，Kylin使用了一种增量Cubing技术来进行快速响应。
+
+Kylin的Cube可以根据时间段划分成多个Segment。在Cube第一次Build完成之后会有一个Segment，
+在每次增量Build后会产生一个新的Segment。增量Cubing依赖已有的CubeSegments和增量的原始数据。
+增量Cubing的步骤和新建 Cube的步骤类似，Segment之间以时间段进行区分。
+
+增量Cubing所需要面对的原始数据量更小，因此增量Cubing的速度是非常快的。然而随着CubeSegments的数目增加，一定程度上会影响到查询的进行，
+所以在Segments数目到一定数量后可能需要进行CubeSegments的合并操作，
+实际上MergeCube是合成了一个新的大的CubeSegment来替代，Merge操作是一个异步的在线操作，不会对前端的查询业务产生影响。
+
 
 ## Cube的构建算法
 
@@ -90,10 +101,12 @@ location取第二个值(假设为HangZhou)、product取第三个值(假设为Foo
 |    ---     |    -----    |   ------       |  -----       |
 |   结果管理 | 模型管理，Cube管理, 数据源管理| job管理|  系统管理       |
 
-## 示例
+## 参考文章
 [一个创建Model的示例](http://www.mamicode.com/info-detail-1721758.html)
 
 [一个创建Cube的示例](http://blog.51cto.com/10120275/1905936)
+
+[相关要点详细说明](https://www.cnblogs.com/en-heng/p/5239311.html)
 
  
 
