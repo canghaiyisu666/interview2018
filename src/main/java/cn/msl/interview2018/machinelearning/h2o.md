@@ -44,3 +44,8 @@ H2O 允许你把已经构建好的POJO和MOJO进行转换。
 Sparkling Water允许用户把H2O高效可扩展的机器学习算法和spark结合起来。通过Sparkling Water,
 用户可以执行 Scala/R/Python的计算任务或是在flowUI上执行，给应用开发者提供了一个便捷的平台。
 
+
+使用态和集成态
+底层是如何执行决定了是开发算子集成还是外部调用集成。
+
+预测的三种方式： 1.web service  2.实时streaming   3. 离线批处理
