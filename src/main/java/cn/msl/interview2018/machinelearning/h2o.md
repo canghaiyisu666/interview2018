@@ -11,7 +11,7 @@ H2O目前支持的机器学习算法有：
 监督学习（GLM、GBM、Deep Learning、Distributed Random Forest、Naive Bayes、Stacked Ensembles），
 非监督学习（GLRM、K-Means、PCA）以及Word2vec模型。
 
-Spark1.5MLlib支持的H2O算法：
+Spark1.5MLlib已支持的H2O算法：
 Distributed Random Forest 、Naive Bayes 、 K-Means 、PCA 、Word2vec
 
 ## 架构
@@ -57,20 +57,79 @@ H2O 允许你把已经构建好的POJO和MOJO进行转换。
 做预测时所必须依赖的开发包，H2O生成的MOJO和POJO模型必须依赖getmodel.jar才可正常使用。
 
 
-## 三种使用与集成方式
+## 集成方式
 
-### H2O local
-Flow
-
-### H2O hadoop 
+### 外部H2O集群（KMEANS实际使用流程）
 
 
-### Sparkling Water  
-Sparkling Water允许用户把H2O高效可扩展的机器学习算法和spark结合起来。
+
+### 内部整合hadoop平台
+支持的hadoop平台列表：
+cdh5.4
+cdh5.5
+cdh5.6
+cdh5.7
+cdh5.8
+cdh5.10
+cdh5.13
+cdh5.14
+hdp2.2
+hdp2.3
+hdp2.4
+hdp2.5
+hdp2.6
+mapr4.0
+mapr5.0
+mapr5.1
+mapr5.2
+iop4.2
+
+
+
+### 内部整合Sparkling Water  
+#### 概述
+
+Sparkling Water允许用户把H2O高效的机器学习算法和spark结合起来。
 通过Sparkling Water,用户可以执行 Scala/R/Python的计算任务或是在flowUI上执行，给应用开发者提供了一个便捷的平台。
+
+
+#### 兼容性
+1. 支持的数据源
+  * RDD 可以转换为H2O RDD
+  * 文件：local filesystem；HDFS；S3；HTTP/HTTPS
+2. 数据存储格式
+  * CSV
+  * SVMLight
+  * ARFF
+  * Parquet
+3. 支持的spark环境
+  * as a local cluster (where the master node is local or local[ * ])
+  * as a standalone cluster 1
+  * in a YARN environment 2
+
+
+#### 两种后端服务模式
+1. internal模式
+Sparkling water在spark的executor里启动，即在spark application提交之后自动创建。
+这种方式部署容易，但是当yarn杀掉executor时H2O集群会挂掉，因为H2O不支持HA.
+
+2. external模式
+外部模式下sparkling water 独立启动，并且和spark的driver进行通信。优点是spark的excutor被kill之后不会影响用户使用。
+
+
+#### 兼容的spark版本
+spark1.5.0   ???
+spark2.0.2
+spark2.1.2
+spark2.2.1
+
+
+
+
+
 
 
 使用态和集成态
 底层是如何执行决定了是开发算子集成还是外部调用集成。
 
-打分预测的三种方式： 1.web service通过自带的steam实现； [steam](https://www.jianshu.com/p/c158c4826c5d) 2. 整合实时streaming算子；   3. 整合离线批处理。
+打分预测的三种方式： 1.web service通过自带ing算子；   3. 整合离线批处理。的steam实现； [steam](https://www.jianshu.com/p/c158c4826c5d) 2. 整合实时stream
