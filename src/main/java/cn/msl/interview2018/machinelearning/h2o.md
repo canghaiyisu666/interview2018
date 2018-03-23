@@ -164,6 +164,6 @@ spark2.2.1
 
 2. 预测打分前需要输入模型再编译
 
-3. 打分预测的形势：
+3. 打分预测的三种方式： 1.web service通过自带的steam实现； [steam](https://www.jianshu.com/p/c158c4826c5d)  2. 整合实时streaming算子；  3. 整合离线批处理。
 
-4. 打分预测的三种方式： 1.web service通过自带的steam实现； [steam](https://www.jianshu.com/p/c158c4826c5d)  2. 整合实时streaming算子；  3. 整合离线批处理。 
+4. sparkling water有待C60部署测试。 
