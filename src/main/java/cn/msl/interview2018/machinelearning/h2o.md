@@ -54,7 +54,7 @@ H2O 允许你把已经构建好的POJO和MOJO进行转换。
 * From Sparkling Water
 
 ### getmodel.jar
-做预测时所必须依赖的开发包，H2O生成的MOJO和POJO模型必须依赖getmodel.jar才可正常使用。
+做预测时所必须依赖的开发包，H2O生成的POJO模型必须依赖getmodel.jar才可编译使用。
 
 
 ## 集成方式
@@ -159,14 +159,11 @@ spark2.2.1
 
 
 
-几点问题：
-model的导出暂不支持java，可以使用java-rest代替
+### 存在问题：
+1. model的导出暂不支持java方式，可以使用java-rest代替
 
-预测打分时需要输入模型后再编译
+2. 预测打分前需要输入模型再编译
 
+3. 打分预测的形势：
 
-
-使用态和集成态
-底层是如何执行决定了是开发算子集成还是外部调用集成。
-
-打分预测的三种方式： 1.web service通过自带ing算子；   3. 整合离线批处理。的steam实现； [steam](https://www.jianshu.com/p/c158c4826c5d) 2. 整合实时stream
+4. 打分预测的三种方式： 1.web service通过自带的steam实现； [steam](https://www.jianshu.com/p/c158c4826c5d)  2. 整合实时streaming算子；  3. 整合离线批处理。 
