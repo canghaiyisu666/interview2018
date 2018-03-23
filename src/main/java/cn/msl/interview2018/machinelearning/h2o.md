@@ -59,8 +59,40 @@ H2O 允许你把已经构建好的POJO和MOJO进行转换。
 
 ## 集成方式
 
-### 外部H2O集群（KMEANS实际使用流程）
+### 外部H2O集群（KMEANS在FLOW中的实际操作流程）
+1. 数据输入：输入，解析，得到frame
 
+        importFiles [ "http://s3.amazonaws.com/h2o-public-test-data/smalldata/flow_examples/seeds_dataset.txt" ]
+        
+        setupParse paths: [ "http://s3.amazonaws.com/h2o-public-test-data/smalldata/flow_examples/seeds_dataset.txt" ]
+        
+        parseFiles
+          paths: ["http://s3.amazonaws.com/h2o-public-test-data/smalldata/flow_examples/seeds_dataset.txt"]
+          destination_frame: "seeds_dataset.hex"
+          parse_type: "CSV"
+          separator: 9
+          number_columns: 8
+          single_quotes: false
+          column_types: ["Numeric","Numeric","Numeric","Numeric","Numeric","Numeric","Numeric","Numeric"]
+          delete_on_done: true
+          check_header: -1
+          chunk_size: 4194304
+          
+        getFrameSummary "seeds_dataset.hex"
+
+2. 配置算法进行模型训练
+    
+        buildModel 'kmeans', {"model_id":"kmeans-d1cc0a90-3a54-4eac-8b06-1d66f1f57741","training_frame":"seeds_dataset.hex","ignored_columns":["C7"],"k":"3","max_iterations":"100","init":"PlusPlus","standardize":false,"seed":1425597869002366000}
+
+3. 获取模型，进行打分预测
+        
+        getModel "kmeans-d1cc0a90-3a54-4eac-8b06-1d66f1f57741"      //模型的导出
+        
+        predict model: "kmeans-d1cc0a90-3a54-4eac-8b06-1d66f1f57741", frame: "seeds_dataset.hex", predictions_frame: "prediction-2e8d0460-8bc0-4dc1-9cad-df0a3a9d2eb1"
+        
+4. 得到预测结果
+
+        getFrameSummary "prediction-93633524-0524-43b9-a627-043906e89a4f"
 
 
 ### 内部整合hadoop平台
@@ -126,6 +158,11 @@ spark2.2.1
 
 
 
+
+几点问题：
+model的导出暂不支持java，可以使用java-rest代替
+
+预测打分时需要输入模型后再编译
 
 
 
