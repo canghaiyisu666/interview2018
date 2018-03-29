@@ -2,7 +2,7 @@
 # TenforFlow
 
 * [GitHub地址](https://github.com/tensorflow/tensorflow)
-* [官网地址](www.tensorflow.org)
+* [官网地址](https://www.tensorflow.org/)
 * [API文档地址](https://www.tensorflow.org/api_docs/)
 
 ## 概述
